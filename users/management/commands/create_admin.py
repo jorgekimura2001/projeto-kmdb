@@ -23,31 +23,26 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
 
-        username = kwargs["username"]
-        password = kwargs["password"]
-        email = kwargs["email"]
-
-        if not username:
-            username = "admin"
-        if not password:
-            password = "admin1234"
-        if not email:
-            email = f"{username}@example.com"
+        username = kwargs.get("username") or 'admin'
+        password = kwargs.get("password") or 'admin1234'
+        email = kwargs.get("email") or f'{username}@example.com'
 
         try:
-            user_already_exists = User.objects.get(
+            username_already_exists = User.objects.get(
                 username=username,
+            ) or {}
+            email_already_exists = User.objects.get(
                 email=email,
-            )
-            ipdb.set_trace()
-            if user_already_exists.username == username:
+            ) or {}
+            if username_already_exists.__dict__.get('username') == username:
                 raise CommandError(
                     f"Username {username} already taken.",
                 )
-            if user_already_exists.email == email:
+            if email_already_exists.__dict__.get('email') == email:
                 raise CommandError(
                     f"Email {email} already taken.",
                 )
+
         except User.DoesNotExist:
             User.objects.create_superuser(
                 username=username,
