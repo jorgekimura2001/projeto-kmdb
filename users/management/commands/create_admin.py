@@ -30,15 +30,15 @@ class Command(BaseCommand):
         try:
             username_already_exists = User.objects.get(
                 username=username,
-            ) or {}
+            )
             email_already_exists = User.objects.get(
                 email=email,
-            ) or {}
-            if username_already_exists.__dict__.get('username') == username:
+            )
+            if username_already_exists.username == username:
                 raise CommandError(
                     f"Username {username} already taken.",
                 )
-            if email_already_exists.__dict__.get('email') == email:
+            if email_already_exists.email == email:
                 raise CommandError(
                     f"Email {email} already taken.",
                 )
