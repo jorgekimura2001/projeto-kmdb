@@ -33,3 +33,17 @@ class IsAdminOrReadOnly(permissions.BasePermission):
             return True
         else:
             return False
+
+
+class IsAdminOrCriticOrReadOnly(permissions.BasePermission):
+    def has_permission(
+        self,
+        request: Request,
+        view,
+    ) -> bool:
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        elif request.user.is_authenticated and request.user.is_superuser or request.user.is_authenticated and request.user.is_critic:
+            return True
+        else:
+            return False
