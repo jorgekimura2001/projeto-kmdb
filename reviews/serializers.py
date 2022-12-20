@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from .models import Review
-import ipdb
 
 
 class ReviewSerializer(serializers.ModelSerializer):

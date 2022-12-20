@@ -6,7 +6,6 @@ import uuid
 class Review(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
     stars = models.PositiveIntegerField(
-        # default=1,
         validators=[
             MinValueValidator(1),
             MaxValueValidator(5),

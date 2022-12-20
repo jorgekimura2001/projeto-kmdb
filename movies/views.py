@@ -4,7 +4,6 @@ from .models import Movie
 from users.permissions import IsAdminOrReadOnly
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
-import ipdb
 
 
 class MovieView(generics.ListCreateAPIView):
@@ -14,5 +13,4 @@ class MovieView(generics.ListCreateAPIView):
     serializer_class = MovieSerializer
 
     def perform_create(self, serializer):
-        # self.check_object_permissions(self.request, self.request.user)
         serializer.save(user=self.request.user)
