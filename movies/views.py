@@ -14,5 +14,5 @@ class MovieView(generics.ListCreateAPIView):
     serializer_class = MovieSerializer
 
     def perform_create(self, serializer):
-        self.check_object_permissions(self.request, self.request.user)
+        # self.check_object_permissions(self.request, self.request.user)
         serializer.save(user=self.request.user)

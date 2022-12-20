@@ -20,11 +20,11 @@ class IsAdminOrCreateOnly(permissions.BasePermission):
 
 
 class IsAdminOrReadOnly(permissions.BasePermission):
-    def has_object_permission(
+    def has_permission(
         self,
         request: Request,
         view,
-        user: User,
+        # user: User,
     ) -> bool:
         # ipdb.set_trace()
         if request.method in permissions.SAFE_METHODS:
