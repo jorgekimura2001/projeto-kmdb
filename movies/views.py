@@ -15,5 +15,4 @@ class MovieView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         self.check_object_permissions(self.request, self.request.user)
-        ipdb.set_trace()
         serializer.save(user=self.request.user)

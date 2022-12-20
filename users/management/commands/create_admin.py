@@ -80,10 +80,18 @@ class Command(BaseCommand):
                 )
             if email_already_exists:
                 raise CommandError(
-                    f"Email {email} already taken.",
+                    f"Email `{email}` already taken.",
                 )
 
         except User.DoesNotExist:
+
+            email_already_exists = User.objects.get(
+                    email='admin@example.com',
+                )
+            if email_already_exists:
+                raise CommandError(
+                    f"Email `{email}` already taken.",
+                )
 
             # ipdb.set_trace()
             User.objects.create_superuser(

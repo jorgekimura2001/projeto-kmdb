@@ -11,7 +11,7 @@ class MovieSerializer(serializers.ModelSerializer):
     def create(self, validated_data: dict) -> Movie:
 
         request_genres = validated_data.pop('genres')
-        ipdb.set_trace()
+        # ipdb.set_trace()
         movie = Movie.objects.create(**validated_data)
         for genre in request_genres:
             genre_request, _ = Genre.objects.get_or_create(**genre)
