@@ -23,34 +23,57 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
 
-        username = kwargs.get("username") or 'admin'
-        password = kwargs.get("password") or 'admin1234'
-        email = kwargs.get("email") or f'{username}@example.com'
+        username = kwargs.get("username")
+        password = kwargs.get("password")
+        email = kwargs.get("email")
 
         try:
-            username_already_exists = User.objects.get(
-                username=username,
-            )
-            email_already_exists = User.objects.get(
-                email=email,
-            )
-            if username_already_exists.username == username:
-                raise CommandError(
-                    f"Username {username} already taken.",
+            if not username:
+                username = 'admin'
+            else:
+                # se passado segue abaixo
+                username_already_exists = User.objects.get(
+                    # se o username existir no db vai pro if
+                    # se não retorna does not exist
+                    username=username,
                 )
-            if email_already_exists.email == email:
-                raise CommandError(
-                    f"Email {email} already taken.",
+                if username_already_exists.username == username:
+                    raise CommandError(
+                        f"Username `{username}` already taken.",
+                    )
+
+            if not email:
+                email = f'{username}@example.com'
+            else:
+                email_already_exists = User.objects.get(
+                    email=email,
                 )
+                if email_already_exists.email == email:
+                    raise CommandError(
+                        f"Email {email} already taken.",
+                    )
+
+            if not password:
+                password = 'admin1234'
+
+            raise User.DoesNotExist
 
         except User.DoesNotExist:
+            if username == 'admin':
+                raise CommandError(
+                        f"Username `{username}` already taken.",
+                    )
+            if email == 'admin@example.com':
+                raise CommandError(
+                        f"Email {email} already taken.",
+                    )
             User.objects.create_superuser(
-                username=username,
-                password=password,
-                email=email,
+                username=username or 'admin',
+                password=password or 'admin1234',
+                email=email or f'{username}@example.com',
             )
             self.stdout.write(
                 self.style.SUCCESS(
-                    f"Admin {username} successfully created!",
+                    f"Admin `{username}` successfully created!",
                 )
             )
