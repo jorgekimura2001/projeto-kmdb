@@ -2,6 +2,8 @@ from users.models import User
 from django.core.management.base import BaseCommand, CommandError
 import ipdb
 
+# primeiro verificar se o usuário passou os campos opcionais
+
 
 class Command(BaseCommand):
     help = "Create admin users"
@@ -28,23 +30,28 @@ class Command(BaseCommand):
         email = kwargs.get("email")
 
         try:
-            if not username:
+            if not username and not email:
+                # ipdb.set_trace()
+                # se o usuario nao passar email e username
                 username = 'admin'
-            else:
-                # se passado segue abaixo
+            elif username:
+                # caso o usuário tenha passado segue abaixo
+                # verifica se o username já tem no banco
+                # caso tenha entra no if e estoura um CommandError
+                # caso não tenha, entra no doesnotexist
                 username_already_exists = User.objects.get(
-                    # se o username existir no db vai pro if
-                    # se não retorna does not exist
                     username=username,
                 )
                 if username_already_exists.username == username:
                     raise CommandError(
                         f"Username `{username}` already taken.",
                     )
-
+            # caso o usuario passe o email e não o username
             if not email:
                 email = f'{username}@example.com'
             else:
+                username = email.split('@')[0]
+                # caso o usuario não tenha passado username
                 email_already_exists = User.objects.get(
                     email=email,
                 )
@@ -55,20 +62,32 @@ class Command(BaseCommand):
 
             if not password:
                 password = 'admin1234'
+            # ipdb.set_trace()
+            # verificar se já existe um admin
+            # caso exista já irá entrar no if gerar o CommandError
+            # caso não exista dispara um User.DoesNotExists
 
-            raise User.DoesNotExist
+            username_already_exists = User.objects.get(
+                    username='admin',
+            )
+            if username_already_exists:
+                raise CommandError(
+                    f"Username `{username}` already taken.",
+                )
+
+            email_already_exists = User.objects.get(
+                    email='admin@example.com',
+                )
+            if email_already_exists:
+                raise CommandError(
+                    f"Email {email} already taken.",
+                )
 
         except User.DoesNotExist:
-            if username == 'admin':
-                raise CommandError(
-                        f"Username `{username}` already taken.",
-                    )
-            if email == 'admin@example.com':
-                raise CommandError(
-                        f"Email {email} already taken.",
-                    )
+
+            # ipdb.set_trace()
             User.objects.create_superuser(
-                username=username or 'admin',
+                username=username,
                 password=password or 'admin1234',
                 email=email or f'{username}@example.com',
             )
